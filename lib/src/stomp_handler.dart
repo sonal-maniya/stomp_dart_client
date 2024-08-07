@@ -136,29 +136,20 @@ class StompHandler {
     );
   }
 
-  void ack({required String id, Map<String, String>? headers}) {
-    // Determine the appropriate header key for message ID; default to 'id' if not specified
-    final String headerKeyForMessageId =
-        headers?['headerKeyForMessageId'] ?? 'id';
-
-    final ackHeaders = {
-      ...?headers,
-      headerKeyForMessageId: id,
-    };
-    _transmit(command: 'ACK', headers: ackHeaders);
+  void ack({
+    required String id,
+    Map<String, String>? headers,
+    required String ackHeaderKey,
+  }) {
+    _transmit(command: 'ACK', headers: {...?headers, ackHeaderKey: id});
   }
 
-  void nack({required String id, Map<String, String>? headers}) {
-    // Determine the appropriate header key for message ID; default to 'id' if not specified
-    final String headerKeyForMessageId =
-        headers?['headerKeyForMessageId'] ?? 'id';
-
-    final nackHeaders = {
-      ...?headers,
-      headerKeyForMessageId: id,
-    };
-
-    _transmit(command: 'NACK', headers: nackHeaders);
+  void nack({
+    required String id,
+    Map<String, String>? headers,
+    required String ackHeaderKey,
+  }) {
+    _transmit(command: 'NACK', headers: {...?headers, ackHeaderKey: id});
   }
 
   void watchForReceipt(String receiptId, StompFrameCallback callback) {
