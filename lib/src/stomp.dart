@@ -106,7 +106,22 @@ class StompClient {
     );
   }
 
-  void ack({required String id, Map<String, String>? headers}) {
+  /// Acknowledges the receipt of a message.
+  /// For STOMP [versions 1.0](https://stomp.github.io/stomp-specification-1.0.html#frame-ACK) and [version 1.1](https://stomp.github.io/stomp-specification-1.1.html#ACK), the key used in the header for message identification is `'message-id'`.
+  /// For STOMP [version 1.2](https://stomp.github.io/stomp-specification-1.2.html#ACK) and newer, the key used is `'id'`.
+  /// [id] The unique identifier of the message to acknowledge.
+  /// [headers] Optional additional headers to include in the ACK frame.
+  /// [ackHeaderKey] The key used for the message identification in the headers. Defaults to `'id'` if not specified.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// ack(id: 'message-id-value', ackHeaderKey: 'message-id' );
+  /// ```
+  void ack({
+    required String id,
+    Map<String, String>? headers,
+    String ackHeaderKey = 'id',
+  }) {
     final handler = _handler;
     if (handler == null) {
       throw StompBadStateException(
@@ -115,10 +130,26 @@ class StompClient {
       );
     }
 
-    handler.ack(id: id, headers: headers);
+    handler.ack(id: id, headers: headers, ackHeaderKey: ackHeaderKey);
   }
 
-  void nack({required String id, Map<String, String>? headers}) {
+  /// Not acknowledges the receipt of a message.
+  /// For STOMP versions 1.0 this function is not supported
+  /// For STOMP [versions 1.1](https://stomp.github.io/stomp-specification-1.1.html#NACK), the key used in the header for message identification is `'message-id'`.
+  /// For STOMP [version 1.2](https://stomp.github.io/stomp-specification-1.2.html#NACK) and newer, the key used is `'id'`.
+  /// [id] The unique identifier of the message to acknowledge.
+  /// [headers] Optional additional headers to include in the ACK frame.
+  /// [ackHeaderKey] The key used for the message identification in the headers. Defaults to `'id'` if not specified.
+
+  /// Example usage:
+  /// ```dart
+  /// nack(id: 'message-id-value', ackHeaderKey: 'message-id' );
+  /// ```
+  void nack({
+    required String id,
+    Map<String, String>? headers,
+    String ackHeaderKey = 'id',
+  }) {
     final handler = _handler;
     if (handler == null) {
       throw StompBadStateException(
@@ -127,7 +158,7 @@ class StompClient {
       );
     }
 
-    handler.nack(id: id, headers: headers);
+    handler.nack(id: id, headers: headers, ackHeaderKey: ackHeaderKey);
   }
 
   void _scheduleReconnect() {

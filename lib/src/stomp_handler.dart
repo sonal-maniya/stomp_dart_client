@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:stomp_dart_client/src/constants.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'parser.dart';
@@ -135,12 +136,20 @@ class StompHandler {
     );
   }
 
-  void ack({required String id, Map<String, String>? headers}) {
-    _transmit(command: 'ACK', headers: {...?headers, 'id': id});
+  void ack({
+    required String id,
+    Map<String, String>? headers,
+    required String ackHeaderKey,
+  }) {
+    _transmit(command: 'ACK', headers: {...?headers, ackHeaderKey: id});
   }
 
-  void nack({required String id, Map<String, String>? headers}) {
-    _transmit(command: 'NACK', headers: {...?headers, 'id': id});
+  void nack({
+    required String id,
+    Map<String, String>? headers,
+    required String ackHeaderKey,
+  }) {
+    _transmit(command: 'NACK', headers: {...?headers, ackHeaderKey: id});
   }
 
   void watchForReceipt(String receiptId, StompFrameCallback callback) {
@@ -150,7 +159,9 @@ class StompHandler {
   void _connectToStomp() {
     final connectHeaders = {
       ...?config.stompConnectHeaders,
-      'accept-version': ['1.0', '1.1', '1.2'].join(','),
+      'accept-version': config.allowedStompVersion != null
+          ? config.allowedStompVersion!.join(',')
+          : defaultStompVersions.join(','),
       'heart-beat': [
         config.heartbeatOutgoing.inMilliseconds,
         config.heartbeatIncoming.inMilliseconds,
