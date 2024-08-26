@@ -287,7 +287,10 @@ void main() {
       handler = StompHandler(
         config: config.copyWith(
           onConnect: (StompFrame frame) {
-            handler!.ack(id: 'message-0', headers: {'receipt': 'send-0'});
+            handler!.ack(
+                id: 'message-0',
+                headers: {'receipt': 'send-0'},
+                ackHeaderKey: '');
           },
           onDisconnect: onDisconnect,
         ),
@@ -311,7 +314,10 @@ void main() {
       handler = StompHandler(
         config: config.copyWith(
           onConnect: (StompFrame frame) {
-            handler!.nack(id: 'message-0', headers: {'receipt': 'send-0'});
+            handler!.nack(
+                id: 'message-0',
+                headers: {'receipt': 'send-0'},
+                ackHeaderKey: '');
           },
           onDisconnect: onDisconnect,
         ),
@@ -363,11 +369,11 @@ void main() {
         throwsA(TypeMatcher<StompBadStateException>()),
       );
       expect(
-        () => handler.ack(id: ''),
+        () => handler.ack(id: '', ackHeaderKey: ''),
         throwsA(TypeMatcher<StompBadStateException>()),
       );
       expect(
-        () => handler.nack(id: ''),
+        () => handler.nack(id: '', ackHeaderKey: ''),
         throwsA(TypeMatcher<StompBadStateException>()),
       );
     });
